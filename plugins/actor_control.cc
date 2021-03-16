@@ -120,27 +120,27 @@ namespace gazebo
       //
       double animationFactor = 5.1;
       double distanceTraveled = 0.0;
+      double sampling_time = 0.03;
       auto actorPose = this->actor->WorldPose();
 
-      double f = sqrt(pow(cmd_vel.linear.x*0.5,2) + pow(cmd_vel.linear.y*0.5,2));
-      double theta = (M_PI - actorPose.Rot().Euler().Z()) - atan2(cmd_vel.linear.y*0.5,cmd_vel.linear.x*0.5);
+      double f = sqrt(pow(cmd_vel.linear.x* sampling_time,2) + pow(cmd_vel.linear.y* sampling_time,2));
+      double theta = (M_PI - actorPose.Rot().Euler().Z()) - atan2(cmd_vel.linear.y*sampling_time,cmd_vel.linear.x*sampling_time);
       double delta_px = f*sin(theta);
       double delta_py = f*cos(theta);
 
       double p_x = actorPose.Pos().X() + delta_px;
       double p_y = actorPose.Pos().Y() + delta_py;
       double p_z = actorPose.Pos().Z() + 0;
-      double r_x = actorPose.Rot().Euler().X() + this->cmd_vel.angular.x*0.5;
-      double r_y = actorPose.Rot().Euler().Y() + this->cmd_vel.angular.y*0.5;
-      double r_z = actorPose.Rot().Euler().Z() + this->cmd_vel.angular.z*0.5;
+      double r_x = actorPose.Rot().Euler().X() + this->cmd_vel.angular.x*sampling_time;
+      double r_y = actorPose.Rot().Euler().Y() + this->cmd_vel.angular.y*sampling_time;
+      double r_z = actorPose.Rot().Euler().Z() + this->cmd_vel.angular.z*sampling_time;
       actorPose.Set(p_x, p_y, p_z, r_x, r_y, r_z);
 
       distanceTraveled = (actorPose.Pos() - this->actor->WorldPose().Pos()).Length();
       this->actor->SetWorldPose(actorPose, false, false);
       this->actor->SetScriptTime(this->actor->ScriptTime() +
         (distanceTraveled * animationFactor));
-
-      gazebo::common::Time::MSleep(500);
+      gazebo::common::Time::MSleep((unsigned int)(sampling_time*1000));
 
     }
 

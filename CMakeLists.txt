@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   message_generation
   object_recognition_msgs
+  social_msgs
 )
 find_package(gazebo REQUIRED)
 
